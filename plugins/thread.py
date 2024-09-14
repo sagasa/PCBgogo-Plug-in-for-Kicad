@@ -12,6 +12,19 @@ from threading import Thread
 from .result_event import *
 from .config import *
 
+def HasPropertyFix(footprint,key):
+    if(pcbnew.Version().startswith("8")):
+        return footprint.HasField(key)
+    else:
+        return footprint.HasProperty(key)
+
+
+def GetPropertyFix(footprint,key):
+    if(pcbnew.Version().startswith("8")):
+        return footprint.GetField(key)
+    else:
+        return footprint.GetProperty(key)
+
 
 class PCBGOGOThread(Thread):
     def __init__(self, wxObject):
@@ -156,8 +169,8 @@ class PCBGOGOThread(Thread):
     def getMpnFromFootprint(self, f):
         keys = ['mpn', 'MPN', 'Mpn', 'PCBWay_MPN']
         for key in keys:
-            if f.HasProperty(key):
-                return f.GetProperty(key)
+            if HasPropertyFix(f,key):
+                return GetPropertyFix(f,key)
 
     def parse_attr_flag(self, attr, mask):
         return mask == (attr & mask)
